@@ -1,15 +1,22 @@
 {
   "name": "fourier-drawer",
   "version": "1.0.0",
+  "start": "webpack serve --open",
   "description": "A simple web app that traces drawings through fourier transforms",
-  "main": "Main.ts",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --open"
   },
   "author": "Tom-the-Bomb",
   "license": "MIT",
   "devDependencies": {
     "@types/p5": "^1.7.6",
-    "p5": "^1.9.3"
+    "p5": "^1.9.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   }
 }
