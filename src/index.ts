@@ -3,6 +3,7 @@ import * as p5 from 'p5';
 import Complex from './Complex';
 import { Points, Fourier } from './Fourier';
 
+
 class CustomP5 extends p5 {
     fourier: Fourier;
     series: Points = [];
@@ -11,10 +12,18 @@ class CustomP5 extends p5 {
 
     drawing: Points = [];
     isOutputting: boolean = false;
+    strokeColor: string;
 
     constructor() {
-        super(() => {}, document.body);
+        super(() => {}, document.getElementById('main')!);
         this.fourier = new Fourier(this.drawing);
+        this.strokeColor = '#FF00FF';
+
+        const colorPicker = document.getElementById('colorInput');
+        colorPicker?.addEventListener('input', (event) => {
+            // @ts-ignore
+            this.strokeColor = colorPicker.value;
+        });
     }
 
     reset(): void {
@@ -43,13 +52,13 @@ class CustomP5 extends p5 {
         this.series = this.fourier.getSeries();
     }
 
-    drawEpiCycles(originX: number, originY: number, offset: number): p5.Vector {
+    drawEpiCycles(originX: number, originY: number, offset: number = 0): p5.Vector {
         let tailX: number;
         let tailY: number;
         let tipX = originX;
         let tipY = originY;
 
-        this.series.forEach((term, idx) => {
+        for (const term of this.series) {
             tailX = tipX;
             tailY = tipY;
             const freq = term.frequency!;
@@ -64,7 +73,7 @@ class CustomP5 extends p5 {
             this.ellipse(tailX, tailY, r * 2);
             this.stroke(255);
             this.line(tailX, tailY, tipX, tipY);
-        });
+        }
         return this.createVector(tipX, tipY);
     }
 
@@ -73,20 +82,20 @@ class CustomP5 extends p5 {
     }
 
     draw(): void {
-        if (this.isOutputting) {
-            this.background(0);
+        this.background(0);
 
-            let epiCycles = this.drawEpiCycles(
-                this.width / 2,
-                this.height / 2,
-                0,
-            );
-            this.path.unshift(epiCycles);
+        if (this.isOutputting) {
+            this.path.unshift(
+                this.drawEpiCycles(
+                    this.width / 2,
+                    this.height / 2,
+                )
+            )
 
             this.beginShape();
             this.noFill();
             this.strokeWeight(2);
-            this.stroke(255, 0, 255);
+            this.stroke(this.strokeColor);
 
             for (const vector of this.path) {
                 this.vertex(vector.x, vector.y);
@@ -99,8 +108,6 @@ class CustomP5 extends p5 {
                 this.path = [];
             }
         } else {
-            this.background(0);
-
             this.drawing.push(new Complex(
                 this.mouseX - this.width / 2,
                 this.mouseY - this.height / 2,
