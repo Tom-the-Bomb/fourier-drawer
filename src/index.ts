@@ -1,6 +1,7 @@
 import * as p5 from 'p5';
 
 import Complex from './Complex';
+import parseSVG from './SvgParser';
 import { Points, Fourier } from './Fourier';
 
 
@@ -19,10 +20,25 @@ class CustomP5 extends p5 {
         this.fourier = new Fourier(this.drawing);
         this.strokeColor = '#FF00FF';
 
-        const colorPicker = document.getElementById('colorInput');
-        colorPicker?.addEventListener('input', (event) => {
-            // @ts-ignore
-            this.strokeColor = colorPicker.value;
+        const colorInput = <HTMLInputElement>document.getElementById('colorInput');
+        colorInput?.addEventListener('input', () => {
+            this.strokeColor = colorInput.value;
+        });
+
+        const fileInput = <HTMLInputElement>document.getElementById('fileInput');
+        fileInput?.addEventListener('input', async (event) => {
+            const file = fileInput.files![0];
+
+            let reader = new FileReader();
+            reader.readAsText(file);
+            reader.addEventListener('load', () => {
+                const points = parseSVG(reader.result as string);
+                console.log(points);
+                this.reset();
+                this.isOutputting = true;
+                this.drawing = points;
+                this.series = this.fourier.getSeries();
+            });
         });
     }
 
