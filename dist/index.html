@@ -18,17 +18,25 @@
                 id="fileInput"
                 accept="image/svg+xml"
             >
-            <label for="colorInput" class="form-label">Stroke color</label>
-            <input
-                type="color"
-                value="#FF00FF"
-                class="form-control form-control-color"
-                id="colorInput"
-                title="Choose your color"
-            >
+            <div class="row">
+                <label for="colorInput" class="form-label">Stroke color</label>
+                <input
+                    type="color"
+                    value="#FF00FF"
+                    class="form-control form-control-color"
+                    id="colorInput"
+                    title="Choose your color"
+                >
+                <label for="stepInput" class="form-label">step</label>
+                <input
+                    value="1"
+                    min="1" max="100"
+                    type="range"
+                    class="form-range"
+                    id="stepInput"
+                >
+            </div>
         </header>
-        <main id="main">
-        </main>
         <script src="bundle.js"></script>
     </body>
 </html>

@@ -12,33 +12,41 @@ class CustomP5 extends p5 {
     path: Array<p5.Vector> = [];
 
     drawing: Points = [];
-    isOutputting: boolean = false;
+    isOutputting?: boolean = undefined;
+
     strokeColor: string;
+    skip: number = 1;
 
     constructor() {
-        super(() => {}, document.getElementById('main')!);
+        super(() => {});
+
         this.fourier = new Fourier(this.drawing);
         this.strokeColor = '#FF00FF';
 
-        const colorInput = <HTMLInputElement>document.getElementById('colorInput');
+        const colorInput = <HTMLInputElement> document.getElementById('colorInput');
         colorInput?.addEventListener('input', () => {
             this.strokeColor = colorInput.value;
         });
 
-        const fileInput = <HTMLInputElement>document.getElementById('fileInput');
-        fileInput?.addEventListener('input', async (event) => {
+        const fileInput = <HTMLInputElement> document.getElementById('fileInput');
+        fileInput?.addEventListener('input', async () => {
             const file = fileInput.files![0];
 
             let reader = new FileReader();
             reader.readAsText(file);
             reader.addEventListener('load', () => {
-                const points = parseSVG(reader.result as string);
-                console.log(points);
                 this.reset();
-                this.isOutputting = true;
-                this.drawing = points;
+                this.drawing.push(
+                    ...parseSVG(reader.result as string, this.width / 2, this.height / 2)
+                );
                 this.series = this.fourier.getSeries();
+                this.isOutputting = true;
             });
+        });
+
+        const stepInput = <HTMLInputElement> document.getElementById('stepInput');
+        stepInput?.addEventListener('input', async () => {
+            this.skip = parseInt(stepInput.value);
         });
     }
 
@@ -55,8 +63,7 @@ class CustomP5 extends p5 {
     }
 
     touchEnded(): void {
-        this.isOutputting = true;
-        this.series = this.fourier.getSeries();
+        this.compute();
     }
 
     mousePressed(): void {
@@ -64,8 +71,18 @@ class CustomP5 extends p5 {
     }
 
     mouseReleased() {
-        this.isOutputting = true;
+        this.compute();
+    }
+
+    compute(): void {
+        const drawingCopy = this.drawing.slice();
+        this.drawing.length = 0;
+
+        for (let i = 0; i < drawingCopy.length; i += this.skip) {
+            this.drawing.push(drawingCopy[i]);
+        }
         this.series = this.fourier.getSeries();
+        this.isOutputting = true;
     }
 
     drawEpiCycles(originX: number, originY: number, offset: number = 0): p5.Vector {
@@ -94,13 +111,21 @@ class CustomP5 extends p5 {
     }
 
     setup(): void {
-        this.createCanvas(this.windowWidth, this.windowHeight);
+        this.createCanvas(
+            this.displayWidth, this.displayHeight,
+        );
+        this.background(0);
+
+        this.fill(255);
+        this.textAlign(this.CENTER);
+        this.textSize(64);
+        this.text("Draw or Upload an SVG", this.width / 2, this.height / 2);
     }
 
     draw(): void {
         this.background(0);
 
-        if (this.isOutputting) {
+        if (this.isOutputting === true) {
             this.path.unshift(
                 this.drawEpiCycles(
                     this.width / 2,
@@ -123,7 +148,7 @@ class CustomP5 extends p5 {
                 this.time = 0;
                 this.path = [];
             }
-        } else {
+        } else if (this.isOutputting === false) {
             this.drawing.push(new Complex(
                 this.mouseX - this.width / 2,
                 this.mouseY - this.height / 2,

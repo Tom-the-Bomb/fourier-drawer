@@ -5,12 +5,10 @@ export type Points = Array<Complex>;
 export class Fourier {
     points: Points;
     time: number;
-    skip: number;
 
-    constructor(points: Points, skip: number = 1) {
+    constructor(points: Points) {
         this.points = points;
         this.time = 0;
-        this.skip = skip;
     }
 
     set setPoints(points: Points) {
