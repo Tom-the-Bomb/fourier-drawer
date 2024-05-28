@@ -5,6 +5,7 @@
   "description": "A simple web app that traces drawings through fourier transforms",
   "private": true,
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --open"
   },
