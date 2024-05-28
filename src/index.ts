@@ -50,14 +50,6 @@ class CustomP5 extends p5 {
         });
     }
 
-    reset(): void {
-        this.isOutputting = false;
-        this.drawing.length = 0;
-        this.series = [];
-        this.path = [];
-        this.time = 0;
-    }
-
     touchStarted(): void {
         this.reset();
     }
@@ -72,6 +64,14 @@ class CustomP5 extends p5 {
 
     mouseReleased() {
         this.compute();
+    }
+
+    reset(): void {
+        this.isOutputting = false;
+        this.drawing.length = 0;
+        this.series = [];
+        this.path = [];
+        this.time = 0;
     }
 
     compute(): void {

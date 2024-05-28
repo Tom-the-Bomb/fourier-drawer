@@ -11,14 +11,16 @@
     </head>
     <body>
         <header>
-            <label for="fileInput" class="form-label">Upload an image</label>
-            <input
-                class="form-control"
-                type="file"
-                id="fileInput"
-                accept="image/svg+xml"
-            >
-            <div class="row">
+            <div class="mb-3">
+                <input
+                    title="Upload an image"
+                    class="form-control"
+                    type="file"
+                    id="fileInput"
+                    accept="image/svg+xml"
+                >
+            </div>
+            <div class="mb-3">
                 <label for="colorInput" class="form-label">Stroke color</label>
                 <input
                     type="color"
@@ -27,10 +29,12 @@
                     id="colorInput"
                     title="Choose your color"
                 >
-                <label for="stepInput" class="form-label">step</label>
+            </div>
+            <div class="mb-3">
+                <label for="stepInput" class="form-label">Step</label>
                 <input
                     value="1"
-                    min="1" max="100"
+                    min="1" max="10"
                     type="range"
                     class="form-range"
                     id="stepInput"
