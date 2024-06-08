@@ -11,11 +11,13 @@ class CustomP5 extends p5 {
     time: number = 0;
     path: Array<p5.Vector> = [];
 
+    rawDrawing: Points = [];
     drawing: Points = [];
     isOutputting?: boolean = undefined;
 
     strokeColor: string;
-    skip: number = 1;
+    skip?: number;
+    scaleFactor: number = 1;
 
     constructor() {
         super(() => {});
@@ -26,60 +28,81 @@ class CustomP5 extends p5 {
         const colorInput = <HTMLInputElement> document.getElementById('colorInput');
         colorInput?.addEventListener('input', () => {
             this.strokeColor = colorInput.value;
+            this._redraw();
         });
 
         const fileInput = <HTMLInputElement> document.getElementById('fileInput');
         fileInput?.addEventListener('input', async () => {
+            console.log('aaaa');
             const file = fileInput.files![0];
 
             let reader = new FileReader();
             reader.readAsText(file);
             reader.addEventListener('load', () => {
                 this.reset();
-                this.drawing.push(
-                    ...parseSVG(reader.result as string, this.width / 2, this.height / 2)
-                );
+                this.rawDrawing = parseSVG(reader.result as string, this.skip);
+
+                for (let i = 0; i < this.rawDrawing.length; i++) {
+                    this.drawing.push(
+                        this.rawDrawing[i].scale(this.scaleFactor)
+                    );
+                }
                 this.series = this.fourier.getSeries();
                 this.isOutputting = true;
             });
         });
 
         const stepInput = <HTMLInputElement> document.getElementById('stepInput');
-        stepInput?.addEventListener('input', async () => {
+        stepInput?.addEventListener('input', () => {
             this.skip = parseInt(stepInput.value);
+            this._redraw();
+        });
+
+        const scaleInput = <HTMLInputElement> document.getElementById('scaleInput');
+        scaleInput?.addEventListener('input', () => {
+            this.scaleFactor = parseInt(scaleInput.value);
+            this._redraw();
         });
     }
 
-    touchStarted(): void {
+    _redraw(): void {
+        const copy = this.rawDrawing.slice();
         this.reset();
-    }
-
-    touchEnded(): void {
+        this.rawDrawing = copy;
         this.compute();
     }
 
-    mousePressed(): void {
+    _touchStarted(): void {
         this.reset();
     }
 
-    mouseReleased() {
+    _touchEnded(): void {
+        this.compute();
+    }
+
+    _mousePressed(): void {
+        this.reset();
+    }
+
+    _mouseReleased() {
         this.compute();
     }
 
     reset(): void {
         this.isOutputting = false;
+        this.rawDrawing.length = 0;
         this.drawing.length = 0;
         this.series = [];
         this.path = [];
         this.time = 0;
     }
 
-    compute(): void {
-        const drawingCopy = this.drawing.slice();
-        this.drawing.length = 0;
-
-        for (let i = 0; i < drawingCopy.length; i += this.skip) {
-            this.drawing.push(drawingCopy[i]);
+    compute(defaultSkip: number = 1): void {
+        let skip = this.skip === undefined ? defaultSkip : this.skip;
+        for (let i = 0; i < this.rawDrawing.length; i += skip) {
+            this.drawing.push(
+                this.rawDrawing[i].scale(this.scaleFactor)
+            );
         }
         this.series = this.fourier.getSeries();
         this.isOutputting = true;
@@ -111,9 +134,15 @@ class CustomP5 extends p5 {
     }
 
     setup(): void {
-        this.createCanvas(
-            this.displayWidth, this.displayHeight,
+        const canvas = this.createCanvas(
+            this.displayWidth,
+            this.windowHeight,
         );
+        canvas.touchStarted(() => this._touchStarted());
+        canvas.touchEnded(() => this._touchEnded());
+        canvas.mousePressed(() => this._mousePressed());
+        canvas.mouseReleased(() => this._mouseReleased());
+
         this.background(0);
 
         this.fill(255);
@@ -149,7 +178,7 @@ class CustomP5 extends p5 {
                 this.path = [];
             }
         } else if (this.isOutputting === false) {
-            this.drawing.push(new Complex(
+            this.rawDrawing.push(new Complex(
                 this.mouseX - this.width / 2,
                 this.mouseY - this.height / 2,
             ));
@@ -158,7 +187,7 @@ class CustomP5 extends p5 {
             this.noFill();
             this.beginShape();
 
-            for (const point of this.drawing) {
+            for (const point of this.rawDrawing) {
                 this.vertex(
                     point.re + this.width / 2,
                     point.im + this.height / 2

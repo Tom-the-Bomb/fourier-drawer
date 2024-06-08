@@ -1,20 +1,27 @@
 import { Points } from './Fourier';
 import Complex from './Complex';
 
-export default function parseSvg(raw: string, centerX: number = 0, centerY: number = 0): Points {
+export default function parseSvg(
+    raw: string,
+    skip?: number,
+): Points {
     let points = [];
     let parser = new DOMParser();
 
     const doc = parser.parseFromString(raw, 'application/xml');
     const paths = doc.getElementsByTagName('path');
 
-    for (const path of paths) {
-        for (let i = 0; i < path.getTotalLength(); i++) {
-            const point = path.getPointAtLength(i);
+    const box = doc.getElementsByTagName('svg')[0].viewBox.baseVal;
+    const width = box.width;
+    const height = box.height;
 
-            points.push(
-                new Complex(point.x / 2 - centerX, point.y / 2 - centerY)
-            );
+    for (const path of paths) {
+        const total = path.getTotalLength();
+        const localSkip = skip === undefined ? total / 100 : skip;
+
+        for (let i = 0; i < total; i += localSkip) {
+            const point = path.getPointAtLength(i);
+            points.push(new Complex(point.x - width / 2, point.y - height / 2));
         }
     }
     return points;
