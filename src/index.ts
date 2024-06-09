@@ -16,8 +16,11 @@ class CustomP5 extends p5 {
     isOutputting?: boolean = undefined;
 
     strokeColor: string;
+    strokeWidth: number = 2;
     skip?: number;
     scaleFactor: number = 1;
+
+    font = this.loadFont('./assets/jetbrains-mono.ttf');
 
     constructor() {
         super(() => {});
@@ -33,7 +36,6 @@ class CustomP5 extends p5 {
 
         const fileInput = <HTMLInputElement> document.getElementById('fileInput');
         fileInput?.addEventListener('input', async () => {
-            console.log('aaaa');
             const file = fileInput.files![0];
 
             let reader = new FileReader();
@@ -52,6 +54,12 @@ class CustomP5 extends p5 {
             });
         });
 
+        const strokeWInput = <HTMLInputElement> document.getElementById('strokeWInput');
+        strokeWInput?.addEventListener('input', () => {
+            this.strokeWidth = parseInt(strokeWInput.value);
+            this._redraw();
+        });
+
         const stepInput = <HTMLInputElement> document.getElementById('stepInput');
         stepInput?.addEventListener('input', () => {
             this.skip = parseInt(stepInput.value);
@@ -63,6 +71,15 @@ class CustomP5 extends p5 {
             this.scaleFactor = parseInt(scaleInput.value);
             this._redraw();
         });
+
+        const pauseButton = document.getElementById('pauseBtn');
+        pauseButton?.addEventListener('click', () => {
+            let [_, src] = this.isLooping()
+                ? [this.noLoop(), './assets/play.svg']
+                : [this.loop(), './assets/pause.svg'];
+
+            document.getElementById("pauseIcon")?.setAttribute('src', src);
+        });
     }
 
     _redraw(): void {
@@ -72,19 +89,19 @@ class CustomP5 extends p5 {
         this.compute();
     }
 
-    _touchStarted(): void {
+    canvasTouchStarted(): void {
         this.reset();
     }
 
-    _touchEnded(): void {
+    canvasTouchEnded(): void {
         this.compute();
     }
 
-    _mousePressed(): void {
+    canvasMousePressed(): void {
         this.reset();
     }
 
-    _mouseReleased() {
+    canvasMouseReleased() {
         this.compute();
     }
 
@@ -125,6 +142,7 @@ class CustomP5 extends p5 {
             tipY += r * Math.sin(freq * this.time + arg + offset);
 
             this.stroke(255, 100);
+            this.strokeWeight(2);
             this.noFill();
             this.ellipse(tailX, tailY, r * 2);
             this.stroke(255);
@@ -133,19 +151,30 @@ class CustomP5 extends p5 {
         return this.createVector(tipX, tipY);
     }
 
-    setup(): void {
-        const canvas = this.createCanvas(
-            this.displayWidth,
+    windowResized(): void {
+        this.resizeCanvas(
+            this.windowWidth,
             this.windowHeight,
         );
-        canvas.touchStarted(() => this._touchStarted());
-        canvas.touchEnded(() => this._touchEnded());
-        canvas.mousePressed(() => this._mousePressed());
-        canvas.mouseReleased(() => this._mouseReleased());
+    }
+
+    setup(): void {
+        const canvas = this.createCanvas(
+            this.windowWidth,
+            this.windowHeight,
+        );
+        canvas.touchStarted(() => this.canvasTouchStarted());
+        canvas.touchEnded(() => this.canvasTouchEnded());
+        canvas.mousePressed(() => this.canvasMousePressed());
+        canvas.mouseReleased(() => this.canvasMouseReleased());
 
         this.background(0);
+        this.drawStart();
+    }
 
+    drawStart(): void {
         this.fill(255);
+        this.textFont(this.font);
         this.textAlign(this.CENTER);
         this.textSize(64);
         this.text("Draw or Upload an SVG", this.width / 2, this.height / 2);
@@ -164,7 +193,7 @@ class CustomP5 extends p5 {
 
             this.beginShape();
             this.noFill();
-            this.strokeWeight(2);
+            this.strokeWeight(this.strokeWidth);
             this.stroke(this.strokeColor);
 
             for (const vector of this.path) {
@@ -190,10 +219,12 @@ class CustomP5 extends p5 {
             for (const point of this.rawDrawing) {
                 this.vertex(
                     point.re + this.width / 2,
-                    point.im + this.height / 2
+                    point.im + this.height / 2,
                 );
             }
             this.endShape();
+        } else {
+            this.drawStart();
         }
     }
 }

@@ -1,9 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Geostar&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 html, body {
     margin: 0;
     padding: 0;
-}
-
-html {
     background-color: black;
 }
 
@@ -13,18 +13,68 @@ body {
     background-color: black;
 }
 
+h1 {
+    text-align: center;
+    font-family: 'Geostar'
+}
+
 header {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    flex-direction: row;
-
+    flex-direction: column;
+    color: white;
     gap: 2em;
     padding: 2em;
-    background-color: black;
-    color: white;
 }
 
-canvas {
-    width: 100% !important;
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 2em;
+}
+
+footer {
+    text-align: center;
+    padding: 2em;
+    font-family: 'Jetbrains Mono', monospace;
+    color: rgb(190, 190, 190);
+}
+
+#fourier-link {
+    color: white;
+    text-decoration: none;
+    -webkit-transition: 0.2s;
+    transition: 0.2s;
+}
+
+#fourier-link:hover {
+    font-size: 1.05em;
+    color: rgb(190, 190, 255);
+}
+
+::-webkit-scrollbar {
+    height: 0.9em;
+    width: 0.9em;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-corner {
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(49, 48, 53);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(41, 40, 44);
 }

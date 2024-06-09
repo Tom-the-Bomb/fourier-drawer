@@ -11,56 +11,73 @@
     </head>
     <body>
         <header>
-            <div class="mb-3">
-                <input
-                    title="Upload an image"
-                    class="form-control"
-                    type="file"
-                    id="fileInput"
-                    accept="image/svg+xml"
-                >
-            </div>
-            <div class="mb-3">
-                <label for="colorInput" class="form-label">Stroke color</label>
-                <input
-                    type="color"
-                    value="#FF00FF"
-                    class="form-control form-control-color"
-                    id="colorInput"
-                    title="Choose your color"
-                >
-            </div>
-            <div class="mb-3">
-                <label for="stepInput" class="form-label">Step</label>
-                <input
-                    value="1"
-                    min="1" max="30"
-                    type="range"
-                    class="form-range"
-                    id="stepInput"
-                >
-            </div>
-            <div class="mb-3">
-                <label for="scaleInput" class="form-label">Scale</label>
-                <input
-                    value="1"
-                    min="1" max="10"
-                    type="range"
-                    class="form-range"
-                    id="scaleInput"
-                >
-            </div>
-            <div class="mb-3">
-                <label for="nvectorsInput" class="form-label">Vector count</label>
-                <input
-                    value="1"
-                    min="1" max="1000"
-                    type="range"
-                    class="form-range"
-                    id="nvectorsInput"
-                >
-            </div>
+            <h1>
+                Sketch&nbsp;&nbsp;a&nbsp;
+                <a id="fourier-link" rel="noopener" target="_blank" href="https://www.youtube.com/watch?v=r6sGWTCMz2k">Fourier</a>
+            </h1>
+            <nav>
+                <div class="mb-3">
+                    <input
+                        title="Upload an image"
+                        class="form-control"
+                        type="file"
+                        id="fileInput"
+                        accept="image/svg+xml"
+                    >
+                </div>
+                <div class="mb-3">
+                    <button id="pauseBtn" type="button" class="btn btn-secondary">
+                        <img id="pauseIcon" src="./assets/pause.svg" alt="pause">
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <label for="colorInput" class="form-label">Stroke color</label>
+                    <input
+                        type="color"
+                        value="#FF00FF"
+                        class="form-control form-control-color"
+                        id="colorInput"
+                        title="Choose your color"
+                    >
+                </div>
+                <div class="mb-3">
+                    <label for="strokeWInput" class="form-label">Stroke Width</label>
+                    <input
+                        value="1"
+                        min="1" max="10"
+                        type="range"
+                        class="form-range"
+                        id="strokeWInput"
+                    >
+                </div>
+                <div class="mb-3">
+                    <label for="stepInput" class="form-label">Step</label>
+                    <input
+                        value="1"
+                        min="1" max="30"
+                        type="range"
+                        class="form-range"
+                        id="stepInput"
+                    >
+                </div>
+                <div class="mb-3">
+                    <label for="scaleInput" class="form-label">Scale Factor</label>
+                    <input
+                        value="1"
+                        min="1" max="5"
+                        type="range"
+                        class="form-range"
+                        id="scaleInput"
+                    >
+                </div>
+            </nav>
         </header>
+        <main></main>
+        <footer>
+            Made By
+            <a rel="noopener" target="_blank" href="https://github.com/Tom-the-Bomb/">
+                Tom-the-Bomb</a> 2024
+        </footer>
         <script src="bundle.js"></script>
     </body>
 </html>
