@@ -54,6 +54,23 @@ class CustomP5 extends p5 {
             });
         });
 
+        const fileDropArea = document.getElementById('fileDropArea');
+        fileDropArea?.addEventListener('drop', (event) => {
+            event.preventDefault();
+
+            const files = event.dataTransfer?.files;
+            if (files && files[0].type === 'image/svg') {
+                fileInput.files = files;
+            }
+        });
+
+        document.addEventListener('paste', (event) => {
+            const files = event.clipboardData?.files;
+            if (files && files[0].type === 'image/svg') {
+                fileInput.files = files;
+            }
+        });
+
         const strokeWInput = <HTMLInputElement> document.getElementById('strokeWInput');
         strokeWInput?.addEventListener('input', () => {
             this.strokeWidth = parseInt(strokeWInput.value);
