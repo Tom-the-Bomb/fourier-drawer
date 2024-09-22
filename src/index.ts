@@ -107,19 +107,27 @@ class CustomP5 extends p5 {
     }
 
     canvasTouchStarted(): void {
-        this.reset();
+        if (this.isLooping()) {
+            this.reset();
+        }
     }
 
     canvasTouchEnded(): void {
-        this.compute();
+        if (this.isLooping()) {
+            this.compute();
+        }
     }
 
     canvasMousePressed(): void {
-        this.reset();
+        if (this.isLooping()) {
+            this.reset();
+        }
     }
 
     canvasMouseReleased() {
-        this.compute();
+        if (this.isLooping()) {
+            this.compute();
+        }
     }
 
     reset(): void {
